@@ -1,20 +1,19 @@
 import os
 from github import Github
-import google.generativeai as genai
+from google import genai  # The brand new SDK
 
-# 1. Grab the API keys from GitHub Secrets (Environment Variables)
+# 1. Grab the API keys from the environment
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-# Configure the AI Brain
-genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-1.5-flash')
+# 2. Initialize the new AI Client
+client = genai.Client(api_key=GEMINI_API_KEY)
 
 def main():
-    # 2. Connect to GitHub
+    # 3. Connect to GitHub
     g = Github(GITHUB_TOKEN)
     
-    # Get the repository and PR number from GitHub Actions
+    # Get the repository and PR number
     repo_name = os.getenv("GITHUB_REPOSITORY")
     pr_number = int(os.environ.get("PR_NUMBER", 0))
     
@@ -25,7 +24,7 @@ def main():
     repo = g.get_repo(repo_name)
     pr = repo.get_pull(pr_number)
 
-    # 3. Fetch the exact code changes (the + and - lines)
+    # 4. Fetch the code changes
     diff_text = ""
     for file in pr.get_files():
         diff_text += f"File: {file.filename}\n"
@@ -35,22 +34,27 @@ def main():
         print("No code changes found to review.")
         return
 
-    # 4. Give the AI its instructions and the code
+    # 5. Instructions for the ai
     prompt = f"""
     You are a strict but helpful Senior Python Developer. 
     Review the following GitHub Pull Request diff.
     Look for bugs, security flaws, and bad time complexity. 
-    Keep your feedback concise and helpful.
+    Keep your feedback concise and helpful. Do not write a massive essay.
     
     Code Diff:
     {diff_text}
     """
     
     print("Sending code to AI for review...")
-    response = model.generate_content(prompt)
+    
+    # 6. Generate the response using the new SDK syntax
+    response = client.models.generate_content(
+        model='gemini-2.5-flash',
+        contents=prompt
+    )
 
-    # 5. Post the AI's response as a comment on the PR
-    pr.create_issue_comment(f"🤖 **PR Reviewer**\n\n{response.text}")
+    # 7. Post the comment
+    pr.create_issue_comment(f"🤖 *Automated PR Review*\n\n{response.text}")
     print("Review posted successfully!")
 
 if __name__ == "__main__":
