@@ -3,7 +3,7 @@ return a * b
 
 def factorial(n):
     # Classic recursive factorial function
-    # Wait, what happens if someone types factorial
+    # Wait, what happens if someone types fac
     if n == 0 or n == 1:
         return 1
     
