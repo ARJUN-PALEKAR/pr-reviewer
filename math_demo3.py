@@ -9,7 +9,7 @@ def divide_numbers(a, b):
     return a / b
 
 def slow_fibonacci(n):
-    # FLAW 3: Terrible time complexity. This will freeze if n is a big number.
+    # FLAW 3: Terrible time complexity. This will freeze if n is a big number
     if n <= 1:
         return n
     return slow_fibonacci(n-1) + slow_fibonacci(n-2)

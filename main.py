@@ -34,7 +34,7 @@ def main():
         print("No code changes found to review.")
         return
 
-    # 5. Instructions for the AI
+    # 5. Instructions for the ai
     prompt = f"""
     You are a strict but helpful Senior Python Developer. 
     Review the following GitHub Pull Request diff.
