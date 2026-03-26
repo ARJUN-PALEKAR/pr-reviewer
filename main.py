@@ -57,5 +57,5 @@ def main():
     pr.create_issue_comment(f"🤖 *Automated PR Review*\n\n{response.text}")
     print("Review posted successfully!")
 
-if _name_ == "_main_":
+if __name__ == "_main_":
     main()
